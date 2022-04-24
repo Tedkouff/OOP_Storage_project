@@ -57,6 +57,8 @@ bool Date::isValidDate(unsigned long y, unsigned short m, unsigned short d) cons
         case 2:
             return d <= 28 + leapYear(y);
     }
+    
+    return false;
 }
 
 bool Date::leapYear(unsigned long y) const
