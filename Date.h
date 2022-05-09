@@ -13,6 +13,7 @@ class Date
     bool leapYear(unsigned long y) const;
     bool isValidDate(unsigned long y, unsigned short m, unsigned short d) const;
 public:
+    Date();
     Date(unsigned long y, unsigned short m, unsigned short d);
     Date(const Date& rhs);
     Date& operator=(const Date& rhs);
@@ -21,8 +22,11 @@ public:
     unsigned short getMonth() const;
     unsigned short getDay() const;
 
+    bool operator==(const Date& rhs) const;
+    bool operator<(const Date& rhs) const;
+    bool operator>(const Date& rhs) const;
+
     friend std::ostream& operator<<(std::ostream& os, const Date& date);
-    friend std::istream& operator>>(std::istream& is, Date& date);
 };
 
 #endif //DATE_H
