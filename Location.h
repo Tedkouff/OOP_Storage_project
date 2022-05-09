@@ -1,14 +1,19 @@
-#ifndef PROJECT_STORAGE_LOCATION_H
-#define PROJECT_STORAGE_LOCATION_H
+#ifndef LOCATION_H
+#define LOCATION_H
 
 class Location
 {
     int section;
     int shelf;
-    int serialNumber;
+    int sequenceNumber;
 
 public:
-    Location(const int section, const int shelf, const int serialNumber);
+    Location();
+    Location(const int& section, const int& shelf, const int& sequenceNumber);
+
+    int getSection() const;
+    int getShelf() const;
+    int getSequenceNumber() const;
 };
 
-#endif //PROJECT_STORAGE_LOCATION_H
+#endif //LOCATION_H
