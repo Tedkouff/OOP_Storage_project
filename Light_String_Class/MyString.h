@@ -20,6 +20,7 @@ public:
     MyString& operator= (const MyString& str);
     char& operator[](std::size_t pos);
     const char& operator[](std::size_t pos) const;
+    std::size_t size() const;
     
     MyString& operator+=(const MyString& rhs);
     MyString operator+(const MyString& rhs) const;
