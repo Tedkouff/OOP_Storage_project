@@ -1,5 +1,7 @@
 #include "Date.h"
 
+Date::Date():year(0), month(0), day(0) {}
+
 Date::Date(unsigned long y, unsigned short m, unsigned short d)
 {
     if (!isValidDate(y, m, d))
@@ -57,8 +59,33 @@ bool Date::isValidDate(unsigned long y, unsigned short m, unsigned short d) cons
         case 2:
             return d <= 28 + leapYear(y);
     }
-    
+
     return false;
+}
+
+bool Date::operator==(const Date& rhs) const
+{
+    return year == rhs.year && month == rhs.month && day == rhs.day;
+}
+
+bool Date::operator<(const Date& rhs) const
+{
+    if(year < rhs.year)
+        return true;
+    else {
+        if (month < rhs.month)
+            return true;
+        else{
+            if(day < rhs.day)
+                return true;
+        }
+    }
+
+    return false;
+}
+bool Date::operator>(const Date& rhs) const
+{
+    return !(*this < rhs);
 }
 
 bool Date::leapYear(unsigned long y) const
@@ -69,18 +96,7 @@ bool Date::leapYear(unsigned long y) const
 
 std::ostream &operator<<(std::ostream &os, const Date &date)
 {
-    os << date.getYear() << "-" << date.getMonth() << "-" << date.getDay();
+    os << date.getYear() << "." << date.getMonth() << "." << date.getDay();
 
     return os;
-}
-
-std::istream &operator>>(std::istream &is, Date &date)
-{
-    unsigned long year;
-    unsigned short day, month;
-
-    is >> year >> month >> day;
-    date = Date(year, month, day);
-
-    return is;
 }
