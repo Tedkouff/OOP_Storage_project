@@ -1,7 +1,7 @@
 #include "Product.h"
 
-Product::Product(const MyString& productName, const Date& expireDate, const Date& entryDate, const MyString& manufacturerName,
-                 const std::size_t& quantity, const Location& productLocation, const MyString& description)
+Product::Product(const MyString& productName, const Date& expireDate, const Date& entryDate,
+                 const MyString& manufacturerName, const std::size_t& quantity, const MyString& description)
 {
     if(productName == "")
         throw std::invalid_argument("Product name cannot be empty!\n");
@@ -20,8 +20,6 @@ Product::Product(const MyString& productName, const Date& expireDate, const Date
 
     this->entryDate = entryDate;
     this->expireDate = expireDate;
-
-    this->productLocation = productLocation;
 }
 
 Product::Product(const Product& rhs)
@@ -62,11 +60,6 @@ std::size_t Product::getQuantity() const
     return quantity;
 }
 
-Location Product::getProductLocation() const
-{
-    return productLocation;
-}
-
 MyString Product::getDescription() const
 {
     return description;
@@ -79,10 +72,6 @@ std::ostream& operator<<(std::ostream& os, const Product& product)
     os << "Entry Date(YYYY.MM.DD): " << product.getEntryDate() << std::endl;
     os << "Manufacturer Name: " << product.getManufacturerName() << std::endl;
     os << "Quantity: " << product.getQuantity() << std::endl;
-    os << "Location in storage: " << product.getProductLocation().getSection() << " section, "
-                                  << product.getProductLocation().getShelf() << "shelf, "
-                                  << product.getProductLocation().getSequenceNumber() << "sequence number"
-                                  << std::endl;
     os << "Description: " << product.getDescription() << std::endl;
 
     return os;
@@ -96,7 +85,6 @@ Product &Product::copy(const Product &rhs) {
     this->quantity = rhs.quantity;
     this->entryDate = rhs.entryDate;
     this->expireDate = rhs.expireDate;
-    this->productLocation = rhs.productLocation;
 
     return *this;
 }
