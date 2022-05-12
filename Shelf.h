@@ -9,21 +9,21 @@ class Storage;
 class Shelf {
 private:
 	Product productOnShelf;
-	Vector<Date> datesOfReceipt;
+	Vector<Date> entryDates;
 	Vector<int> productsForEveryDate;
 
-	void setProduct(const Product&); // mutator za producta na rafta
+	void setProduct(const Product&); // мутатор за продукта на рафта
 public:
 	Shelf();
 	Shelf(const Product&, const Vector<Date>&, const Vector<int>&);
 
-	void add(int, const Date&); // dobavya producti kum rafta
-	void print() const ;				// izvejda informaciya za producta na rafta
-	const Product& getProductOnShelf() const ;	// funkciya za dostup
-	void save(std::ofstream&); // funkciya za zapazvane na informaciya v izhoden failov potok
-	void load(std::ifstream&); // funkciya za izvlichane na informaciya ot vhoden failov potok
+	void add(int, const Date&); // добавя продукти към рафта
+	void print() const ;				// извежда информация за продукта на рафта
+	const Product& getProductOnShelf() const ;	// функция за достъп
+	void save(std::ofstream&); // функция за запазване на информация в изходен файлов поток
+	void load(std::ifstream&); // функция за извличане на информация от входен файлов поток
 
-	friend class Storage; // klas sklad e priyatel za raft
+	friend class Storage; // складът е приятелски клас с рафта
 };
 
 #endif // SHELF_H
