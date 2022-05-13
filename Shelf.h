@@ -2,7 +2,7 @@
 #define SHELF_H
 
 #include "Product.h"
-#include "vector.hpp"
+#include "Vector_Class/Vector.cpp"
 
 class Storage;
 

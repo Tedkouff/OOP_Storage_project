@@ -10,22 +10,26 @@ class Date
     unsigned short month;
     unsigned short day;
 
-    bool leapYear(unsigned long y) const;
-    bool isValidDate(unsigned long y, unsigned short m, unsigned short d) const;
+    bool leapYear(const int y) const;
 public:
     Date();
-    Date(unsigned long y, unsigned short m, unsigned short d);
+    Date(const int y, const int m, const int d);
     Date(const Date& rhs);
     Date& operator=(const Date& rhs);
 
-    unsigned long getYear() const;
-    unsigned short getMonth() const;
-    unsigned short getDay() const;
+    int getYear() const;
+    int getMonth() const;
+    int getDay() const;
+
+    bool isValidDate() const;
+    bool isValidDate(const int y, const int m, const int d) const;
 
     bool operator==(const Date& rhs) const;
     bool operator<(const Date& rhs) const;
     bool operator>(const Date& rhs) const;
 
+    // оператори за вход и изход
+    friend std::istream& operator>>(std::istream&, Date&);
     friend std::ostream& operator<<(std::ostream& os, const Date& date);
 };
 

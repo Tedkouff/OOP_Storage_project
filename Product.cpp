@@ -1,7 +1,9 @@
 #include "Product.h"
 
+Product::Product():quantity(0) {}
+
 Product::Product(const MyString& productName, const Date& expireDate, const Date& entryDate,
-                 const MyString& manufacturerName, const std::size_t& quantity, const MyString& description)
+                 const MyString& manufacturerName, const int& quantity, const MyString& description)
 {
     if(productName == "")
         throw std::invalid_argument("Product name cannot be empty!\n");
@@ -55,7 +57,7 @@ MyString Product::getManufacturerName() const
     return manufacturerName;
 }
 
-std::size_t Product::getQuantity() const
+int Product::getQuantity() const
 {
     return quantity;
 }
@@ -63,18 +65,6 @@ std::size_t Product::getQuantity() const
 MyString Product::getDescription() const
 {
     return description;
-}
-
-std::ostream& operator<<(std::ostream& os, const Product& product)
-{
-    os << "Product Name: " << product.getProductName() << std::endl;
-    os << "Expire Date(YYYY.MM.DD): " << product.getExpireDate() << std::endl;
-    os << "Entry Date(YYYY.MM.DD): " << product.getEntryDate() << std::endl;
-    os << "Manufacturer Name: " << product.getManufacturerName() << std::endl;
-    os << "Quantity: " << product.getQuantity() << std::endl;
-    os << "Description: " << product.getDescription() << std::endl;
-
-    return os;
 }
 
 Product &Product::copy(const Product &rhs) {
@@ -89,3 +79,98 @@ Product &Product::copy(const Product &rhs) {
     return *this;
 }
 
+std::ifstream &operator>>(std::ifstream &ifs, Product &product)
+{
+    ifs >> product.productName;
+    ifs >> product.expireDate;
+    ifs.ignore();
+    ifs >> product.manufacturerName;
+    ifs >> product.quantity;
+    ifs.ignore();
+    ifs >> product.description;
+    for (int i = 0; i < 15; i++) ifs.ignore(); // това е за приемните дати
+
+    return ifs;
+}
+
+std::ofstream &operator<<(std::ofstream &ofs, const Product &product)
+{
+    ofs << product.productName << std::endl;
+    ofs << product.expireDate << std::endl;
+    ofs << product.manufacturerName << std::endl;
+    ofs << product.quantity << std::endl;
+    ofs << product.description << std::endl;
+    ofs << "Entry dates: ";
+
+    return ofs;
+}
+
+std::istream &operator>>(std::istream &is, Product &product)
+{
+    std::cout << "Product name: ";
+    is >> product.productName;
+    int n = product.productName.size();
+    for (int i = 0; i < n; i++) {
+        if ((product.productName[i] < 'a' || product.productName[i] > 'z') &&
+            (product.productName[i] < 'A' || product.productName[i] > 'Z') &&
+            (product.productName[i] < '0' || product.productName[i] > '9'))
+        {
+            std::cout << "Invalid name!" << std::endl;
+            return is;
+        }
+    }
+
+    std::cout << "Expire date(YYYY.MM.DD): ";
+    is >> product.expireDate;
+    if (!(product.expireDate.isValidDate())) return is;
+
+    std::cout << "Entry date(YYYY.MM.DD): ";
+    is >> product.entryDate;
+    if (!(product.entryDate.isValidDate())) return is;
+    if (product.entryDate > product.expireDate) {
+        std::cout << "Storage does not take in moldy products!" << std::endl;
+        return is;
+    }
+
+    is.ignore();
+    std::cout << "Manufacturer name: ";
+    is >> product.manufacturerName;
+
+    std::cout << "Quantity: ";
+    int quantity;
+    is >> quantity;
+    if(quantity <= 0) {
+        std::cout << "Invalid quantity!" << std::endl;
+        return is;
+    }
+    product.quantity = quantity;
+
+    std::cout << "Description: ";
+    is >> product.description;
+
+    return is;
+}
+
+std::ostream& operator<<(std::ostream& os, const Product& product)
+{
+    os << std::endl;
+    os << "Product Name: " << product.getProductName() << std::endl;
+    os << "Expire Date(YYYY.MM.DD): " << product.getExpireDate() << std::endl;
+    os << "Entry Date(YYYY.MM.DD): " << product.getEntryDate() << std::endl;
+    os << "Manufacturer Name: " << product.getManufacturerName() << std::endl;
+    os << "Quantity: " << product.getQuantity() << std::endl;
+    os << "Description: " << product.getDescription() << std::endl;
+    os << std::endl;
+
+    return os;
+}
+
+void Product::save(std::ofstream &ofs)
+{
+    ofs << *this;
+}
+
+void Product::load(std::ifstream &ifs)
+{
+    ifs >> *this;
+}
