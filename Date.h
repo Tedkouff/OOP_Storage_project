@@ -12,18 +12,21 @@ class Date
 
     bool leapYear(const int y) const;
 public:
-    Date();
-    Date(const int y, const int m, const int d);
-    Date(const Date& rhs);
-    Date& operator=(const Date& rhs);
+    Date();                                             // default constructor
+    Date(const int y, const int m, const int d);        // constructor with parameters
+    Date(const Date& rhs);                              // copy constructor
+    Date& operator=(const Date& rhs);                   // copy assignment operator
 
+    // методи за достъп
     int getYear() const;
     int getMonth() const;
     int getDay() const;
 
+    // метод, валидиращ датата
     bool isValidDate() const;
     bool isValidDate(const int y, const int m, const int d) const;
 
+    // логически оператори за сравнение на дати
     bool operator==(const Date& rhs) const;
     bool operator<(const Date& rhs) const;
     bool operator>(const Date& rhs) const;

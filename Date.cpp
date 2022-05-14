@@ -110,7 +110,8 @@ bool Date::leapYear(const int y) const
     return (y%4==0 && y%100!=0) || y%400==0;
 }
 
-std::istream& operator>>(std::istream& is, Date& date) {
+std::istream& operator>>(std::istream& is, Date& date)
+{
     int year, day, month;
 
     is >> year >> month >> day;
