@@ -11,41 +11,41 @@ private:
     int storage;
     int count;
 
-    void copyVectors(const Vector&);
+    void copyVectors(const Vector& rhs);
     void addToCount();
 public:
-    Vector();
-    Vector(int);
-    Vector(const Vector&);
-    Vector& operator=(const Vector&);
-    ~Vector();
+    Vector();                               // constructor
+    Vector(int);                            // constructor with parameter
+    Vector(const Vector& rhs);              // copy constructor
+    Vector& operator=(const Vector& rhs);   // copy assignment operator
+    ~Vector();                              // destructor
 
-    void add(const T&);             // добавя най-отзад елемент към вектора (push_back)
-    int getStorage() const;         // функция за достъп
-    int size() const;               // функция за достъп
-    void print() const;             // извежда елементите на вектора
-    void pushAtIndex(const T&, int);        // присвоява нова стойност на елемент на позиция index
-    void removeAtIndex(int);        // премахва елемент на позиция index (намалява големината с 1)
-    void clear();                   // изчиства заделената памет 
-    void deleteVector();            // изтрива вектора
-    void allocateMemory(int);       // заделя посочено количество памет за вектора
+    void add(const T& element);                      // добавя най-отзад елемент към вектора (push_back)
+    int getStorage() const;                          // функция за достъп
+    int size() const;                                // функция за достъп
+    void print() const;                              // извежда елементите на вектора
+    void pushAtIndex(const T& element, int index);   // присвоява нова стойност на елемент на позиция index
+    void removeAtIndex(int i);                       // премахва елемент на позиция index (намалява големината с 1)
+    void clear();                                    // изчиства заделената памет
+    void deleteVector();                             // изтрива вектора
+    void allocateMemory(int index);                  // заделя посочено количество памет за вектора
 
-    bool operator==(const Vector<T>&) const;
-    T& operator[](int) const;
+    bool operator==(const Vector<T>& other) const;   // оператор, проверяващ дали два вектора са еднакви
+    T& operator[](int) const;                        // оператор, достъпващ елемент на позиция
 };
 
+
 template <typename T>
-void Vector<T>::copyVectors(const Vector& other) {
-    arr = new(std::nothrow) T[other.storage];
+void Vector<T>::copyVectors(const Vector& rhs) {
+    arr = new(std::nothrow) T[rhs.storage];
     if (arr == nullptr) {
-        throw ("No memory for vector!(Vector<T>::copyVectors())");
-        return;
+        throw std::runtime_error("No memory for vector!(Vector<T>::copyVectors())");
     }
-    for (int i = 0; i < other.storage; i++) {
-        arr[i] = other.arr[i];
+    for (int i = 0; i < rhs.storage; i++) {
+        arr[i] = rhs.arr[i];
     }
-    storage = other.storage;
-    count = other.count;
+    storage = rhs.storage;
+    count = rhs.count;
 }
 
 template <typename T>
@@ -57,7 +57,7 @@ template <typename T>
 Vector<T>::Vector() {
     arr = new(std::nothrow) T[1];
     if (arr == nullptr) {
-        throw ("No memory for vector!(default constructor)");
+        throw std::runtime_error("No memory for vector!(default constructor)");
     }
     storage = 1;
     count = 0;
@@ -67,22 +67,22 @@ template <typename T>
 Vector<T>::Vector(int index) {
     arr = new(std::nothrow) T[index + 1];
     if (arr == nullptr) {
-        throw ("No memory for vector!(constructor(int)");
+        throw std::runtime_error("No memory for vector!(constructor(int)");
     }
     storage = index + 1;
     count = 0;
 }
 
 template <typename T>
-Vector<T>::Vector(const Vector<T>& other) {
-    copyVectors(other);
+Vector<T>::Vector(const Vector<T>& rhs) {
+    copyVectors(rhs);
 }
 
 template <typename T>
-Vector<T>& Vector<T>::operator=(const Vector<T>& other) {
-    if (this == &other) return *this;
+Vector<T>& Vector<T>::operator=(const Vector<T>& rhs) {
+    if (this == &rhs) return *this;
     deleteVector();
-    copyVectors(other);
+    copyVectors(rhs);
     return *this;
 }
 
@@ -96,7 +96,7 @@ void Vector<T>::add(const T& element) {
     if (storage == count) {
         T* temp = new(std::nothrow) T[2 * storage];
         if (temp == nullptr) {
-            throw ("No memory for vector!(Vector<T>::add())");
+            throw std::runtime_error("No memory for vector!(Vector<T>::add())");
             return;
         }
         for (int i = 0; i < storage; i++) {
@@ -175,8 +175,7 @@ void Vector<T>::clear() {
     delete[] arr;
     arr = new(std::nothrow) T[1];
     if (arr == nullptr) {
-        throw ("No memory for vector!(Vector<T>::clear())");
-        return;
+        throw std::runtime_error("No memory for vector!(Vector<T>::clear())");
     }
     storage = 1;
     count = 0;
@@ -186,8 +185,7 @@ template <typename T>
 void Vector<T>::allocateMemory(int index) {
     arr = new(std::nothrow) T[index + 1];
     if (arr == nullptr) {
-        throw ("No memory for vector!(Vector<T>::allocateMemory())");
-        return;
+        throw std::runtime_error("No memory for vector!(Vector<T>::allocateMemory())");
     }
     storage = index + 1;
     count = 0;
