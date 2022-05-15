@@ -13,7 +13,8 @@ Product::Product(const MyString& productName, const Date& expireDate, const Date
         throw std::invalid_argument("Manufacturer name cannot be empty!\n");
     this->manufacturerName = manufacturerName;
 
-    // description can be empty
+    if(description == "")
+        throw std::invalid_argument("Description name cannot be empty!\n");
     this->description = description;
 
     if(quantity < 1)
@@ -67,8 +68,8 @@ MyString Product::getDescription() const
     return description;
 }
 
-Product &Product::copy(const Product &rhs) {
-    // validation not needed because rhs is already created
+Product &Product::copy(const Product &rhs)
+{
     this->productName = rhs.productName;
     this->manufacturerName = rhs.manufacturerName;
     this->description = rhs.description;
@@ -77,6 +78,15 @@ Product &Product::copy(const Product &rhs) {
     this->expireDate = rhs.expireDate;
 
     return *this;
+}
+
+bool Product::operator==(const Product& other) const
+{
+    // сравнението е по име, срок на годност и име на производител
+    if (productName == other.productName && expireDate == other.expireDate && manufacturerName == other.manufacturerName)
+        return true;
+
+    return false;
 }
 
 std::ifstream &operator>>(std::ifstream &ifs, Product &product)

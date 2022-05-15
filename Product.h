@@ -36,9 +36,13 @@ public:
     int getQuantity() const;
     MyString getDescription() const;
 
+    bool operator==(const Product&) const;  // сравнява дали два продукта са еднакви
+
     // оператори за работа с файлове
     friend std::ifstream& operator>>(std::ifstream& ifs, Product& product);
     friend std::ofstream& operator<<(std::ofstream& ofs, const Product& product);
+
+    // оператори за вход и изход
     friend std::istream& operator>>(std::istream& is, Product& product);
     friend std::ostream& operator<<(std::ostream& os, const Product& product);
 

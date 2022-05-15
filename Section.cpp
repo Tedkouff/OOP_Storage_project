@@ -2,7 +2,7 @@
 
 Section::Section() {}
 
-Section::Section(const String& name, const Vector<Shelf>& shelves)
+Section::Section(const MyString& name, const Vector<Shelf>& shelves)
 {
 	this->name = name;
 	this->shelves = shelves;
@@ -14,7 +14,7 @@ Section::Section(const char* name, const Vector<Shelf>& shelves)
 	this->shelves = shelves;
 }
 
-const String& Section::getName() const
+const MyString& Section::getName() const
 {
 	return name;
 }
@@ -24,7 +24,7 @@ const Vector<Shelf>& Section::getShelves() const
 	return shelves;
 }
 
-void Section::setName(const String& name) 
+void Section::setName(const MyString& name)
 {
 	this->name = name;
 }
@@ -33,32 +33,32 @@ void Section::print() const {
 	std::cout << "Section name: " << name << std::endl;
 	int n = shelves.size();
 	for (int i = 0; i < n; i++) {
-		std::cout << "Number of shelves: " << i << std::endl;
+		std::cout << "Number of shelf: " << i << std::endl;
 		shelves[i].print();
 	}
 	std::cout << std::endl;
 }
 
-void Section::save(std::ofstream& oFile) 
+void Section::save(std::ofstream& ofs)
 {
-	oFile << name << std::endl;
+    ofs << name << std::endl;
 	int n = shelves.size();
-	oFile << n << " ";
+    ofs << n << " ";
 	for (int j = 0; j < n; j++) {
-		shelves[j].save(oFile); 
+		shelves[j].save(ofs);
 	}
 }
 
-void Section::load(std::ifstream& iFile) 
+void Section::load(std::ifstream& ifs)
 {
-	iFile.ignore();
-	iFile >> name;
+    ifs.ignore();
+    ifs >> name;
 	int n;
-	iFile >> n;
-	iFile.ignore();
+    ifs >> n;
+    ifs.ignore();
 	for (int j = 0; j < n; j++) {
 		Shelf tempShelf;
-		tempShelf.load(iFile);
+		tempShelf.load(ifs);
 		shelves.add(tempShelf); 
 	}
 }

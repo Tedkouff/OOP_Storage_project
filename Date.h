@@ -4,6 +4,8 @@
 #include <iostream>
 #include <stdexcept>
 
+#include "Light_String_Class/MyString.h"
+
 class Date
 {
     unsigned long year;
@@ -14,6 +16,7 @@ class Date
 public:
     Date();                                             // default constructor
     Date(const int y, const int m, const int d);        // constructor with parameters
+    Date& operator=(const char* date);                  // operator= via string
     Date(const Date& rhs);                              // copy constructor
     Date& operator=(const Date& rhs);                   // copy assignment operator
 

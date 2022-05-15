@@ -19,6 +19,15 @@ Date::Date(const Date &rhs)
     this->year=rhs.year;
 }
 
+Date& Date::operator=(const char* date)
+{
+    year = (date[0] - 48) * 1000 + (date[1] - 48) * 100 + (date[2] - 48) * 10 + (date[3] - 48);
+    month = (date[5] - 48) * 10 + (date[6] - 48);
+    day = (date[8] -48) * 10 + (date[9] - 48);
+
+    return *this;
+}
+
 Date &Date::operator=(const Date &rhs)
 {
     if(this != &rhs)

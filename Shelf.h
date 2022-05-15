@@ -12,18 +12,20 @@ private:
 	Vector<Date> entryDates;
 	Vector<int> productsForEveryDate;
 
-	void setProduct(const Product&); // мутатор за продукта на рафта
+	void setProduct(const Product&);    // мутатор за продукта на рафта
 public:
+    // конструктори
 	Shelf();
 	Shelf(const Product&, const Vector<Date>&, const Vector<int>&);
 
-	void add(int, const Date&); // добавя продукти към рафта
-	void print() const ;				// извежда информация за продукта на рафта
+	void add(int, const Date&);                 // добавя продукти към рафта
+	void print() const ;				        // извежда информация за продукта на рафта
 	const Product& getProductOnShelf() const ;	// функция за достъп
-	void save(std::ofstream&); // функция за запазване на информация в изходен файлов поток
-	void load(std::ifstream&); // функция за извличане на информация от входен файлов поток
+	void save(std::ofstream&);                  // функция за запазване на информация в изходен файлов поток
+	void load(std::ifstream&);                  // функция за извличане на информация от входен файлов поток
 
-	friend class Storage; // складът е приятелски клас с рафта
+    // приятелски клас
+	friend class Storage;
 };
 
 #endif // SHELF_H
