@@ -165,17 +165,11 @@ std::ostream& operator<< (std::ostream& os, const MyString& str)
 
 std::istream & operator>> (std::istream & is, MyString &str)
 {
-    char newStr[1024];
-    is >> newStr;
-
-    if (str.str) {
-        delete str.str;
-        str.str = nullptr;
-    }
-
-    str.str = new char[strlen(newStr) + 1];
-    strcpy(str.str, newStr);
-    str.str[strlen(newStr)]= '\0';
+    char* buff = new char[1000];
+    memset(&buff[0], 0, sizeof(buff));
+    is >> buff;
+    str = MyString {buff};
+    delete[] buff;
 
     return is;
 }
