@@ -1,143 +1,135 @@
 #include "Date.h"
 
-Date::Date():year(0), month(0), day(0) {}
-
-Date::Date(const int y, const int m, const int d)
-{
-    if (!isValidDate(y, m, d))
-        throw std::invalid_argument("Invalid input of date!\n");
-
-    this->day=d;
-    this->month=m;
-    this->year=y;
+Date::Date() {
+    year = 0;
+    month[0] = '0';
+    month[1] = '0';
+    month[2] = '\0';
+    day[0] = '0';
+    day[1] = '0';
+    day[2] = '\0';
 }
 
-Date::Date(const Date &rhs)
-{
-    this->day=rhs.day;
-    this->month=rhs.month;
-    this->year=rhs.year;
+Date::Date(const int year_, const char* month_, const char* day_) {
+    year = year_;
+    month[0] = month_[0];
+    month[1] = month_[1];
+    month[2] = '\0';
+    day[0] = day_[0];
+    day[1] = day_[1];
+    day[2] = '\0';
 }
 
-Date& Date::operator=(const char* date)
-{
-    year = (date[0] - 48) * 1000 + (date[1] - 48) * 100 + (date[2] - 48) * 10 + (date[3] - 48);
-    month = (date[5] - 48) * 10 + (date[6] - 48);
-    day = (date[8] -48) * 10 + (date[9] - 48);
+Date& Date::operator=(const char* date_) {
+    year = atoi(date_);
+    int i = 0;
+    do { i++; }while (date_[i] != '-' && date_[i] != '\0');
+    i++;
+    month[0] = date_[i];
+    i++;
+    month[1] = date_[i];
+    i += 2;
+    day[0] = date_[i];
+    i++;
+    day[1] = date_[i];
 
     return *this;
 }
 
-Date &Date::operator=(const Date &rhs)
-{
-    if(this != &rhs)
-    {
-        this->day=rhs.day;
-        this->month=rhs.month;
-        this->year=rhs.year;
-    }
-
-    return *this;
-}
-
-int Date::getYear() const
-{
+const int Date::getYear() const {
     return year;
 }
 
-int Date::getMonth() const
-{
+const char* Date::getMonth() const {
     return month;
 }
 
-int Date::getDay() const
-{
+const char* Date::getDay() const {
     return day;
 }
 
-bool Date::isValidDate() const
-{
-    if(month==0 || month>12 || day==0 || day>31) return false; // проверка дали денят и месецът са валидни
-
-    switch (month) // допълнителна проверка за валидността на дните във всеки месец
-    {
-        case 1: case 3: case 5: case 7: case 8: case 10: case 12:
-            return true;
-        case 4: case 6: case 9: case 11:
-            return day <= 30;
-        case 2:
-            return day <= 28 + leapYear(year);
-    }
-
-    return false;
-}
-
-bool Date::isValidDate(const int y, const int m, const int d) const
-{
-    if(m==0 || m>12 || d==0 || d>31) return false;
-
-    switch (m)
-    {
-        case 1: case 3: case 5: case 7: case 8: case 10: case 12:
-            return true;
-        case 4: case 6: case 9: case 11:
-            return d<=30;
-        case 2:
-            return d <= 28 + leapYear(y);
-    }
-
-    return false;
-}
-
-bool Date::operator==(const Date& rhs) const
-{
-    return year == rhs.year && month == rhs.month && day == rhs.day;
-}
-
-bool Date::operator<(const Date& rhs) const
-{
-    if(year < rhs.year)
+bool Date::operator==(const Date& other) const {
+    if (year == other.year && month[0] == other.month[0] && month[1] == other.month[1] && day[0] == other.day[0] && day[1] == other.day[1]) {
         return true;
-    else {
-        if (month < rhs.month)
-            return true;
-        else{
-            if(day < rhs.day)
-                return true;
-        }
     }
-
     return false;
 }
-bool Date::operator>(const Date& rhs) const
-{
-    return !(*this < rhs);
-}
 
-bool Date::leapYear(const int y) const
-{
-    return (y%4==0 && y%100!=0) || y%400==0;
-}
-
-std::istream& operator>>(std::istream& is, Date& date)
-{
-    int year, day, month;
-
-    is >> year >> month >> day;
-    if(!date.isValidDate(year, month, day))
-        std::cerr << "That date does not exist!\n";
-    else {
-        date.year = year;
-        date.month = month;
-        date.day = day;
+bool Date::isValid() const {
+    if (day[0] < '0' || day[0] > '3') return false;
+    if (day[1] < '0' || day[1] > '9') return false;
+    if (month[0] < '0' || month[0] > '1') return false;
+    if (month[1] < '0' || month[1] > '9') return false;
+    if (month[0] == '1' && month[1] > '2') return false;
+    if (day[0] == '3' && (day[1] < '0' || day[1] > '1' || (month[0] == '0' && month[1] == '2'))) return false;
+    if (day[0] == '3' && day[1] == '1' && (month[1] == '4' || month[1] == '6' || month[1] == '9' || (month[0] == '1' && month[1] == '1'))) return false;
+    if (month[0] == '0' && month[1] == '2' && day[0] == '2' && day[1] == '9') {
+        if (year % 400 == 0) return true;
+        if (year % 100 == 0) return false;
+        if (year % 4 == 0) return true;
+        return false;
     }
-
-    return is;
+    if (year <= 0) return false;
+    return true;
 }
 
-std::ostream &operator<<(std::ostream &os, const Date &date)
-{
-    os << date.getYear() << "." << date.getMonth() << "." << date.getDay();
+std::istream& operator>>(std::istream& in, Date& date) {
+    char dash;
+    in >> date.year;
+    in >> dash;
+    if (dash != '-') {
+        std::cout << "Invalid format of date!" << std::endl;
+        return in;
+    }
+    in.get(date.month, 3);
+    in >> dash;
+    if (dash != '-') {
+        std::cout << "Invalid format of date!" << std::endl;
+        return in;
+    }
+    in.get(date.day, 3);
+    if (!(date.isValid())) {
+        std::cerr << "That date does not exist!" << std::endl;
+    }
+    return in;
 
-    return os;
+}
+
+std::ostream& operator<<(std::ostream& out, const Date& date) {
+    out << date.year << "-" << date.month << "-" << date.day;
+    return out;
+}
+
+bool Date::operator<(const Date& other) const {
+    if (year < other.year) return true;
+    else if (year == other.year) {
+        if (month[0] < other.month[0]) return true;
+        else if (month[0] == other.month[0]) {
+            if (month[1] < other.month[1]) return true;
+            else if (month[1] == other.month[1]) {
+                if (day[0] < other.day[0]) return true;
+                else if (day[0] == other.day[0]) {
+                    if (day[1] < other.day[1]) return true;
+                    else return false;
+                }
+                else return false;
+            }
+            else return false;
+        }
+        else return false;
+    }
+    else return false;
+}
+
+bool Date::operator>(const Date& other) const {
+    return !(*this < other || *this == other);
+}
+
+bool Date::operator<=(const Date& other) const {
+    return !(*this > other);
+
+}
+
+bool Date::operator>=(const Date& other) const {
+    return !(*this < other);
 }

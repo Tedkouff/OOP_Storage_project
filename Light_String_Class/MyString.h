@@ -1,40 +1,49 @@
 #ifndef MYSTRING_H
 #define MYSTRING_H
 
-#include <iostream>
-#include <cstring>
-#include <stdexcept>
+#include<iostream>
+#include<fstream>
+#include<cstring>
+#include<exception>
 
 
-class MyString
-{
+class MyString {
 private:
     char* str;
-    std::size_t lenght;
+    int capacity;
+    int size;
 
+    void copyStrings(const char*, const int, const int);
+    void deleteString();
 public:
-    MyString();                                     // default constructor
-    MyString(const char* str);                      // constructor with parameter
-    ~MyString();                                    // destructor
-    MyString(const MyString& str);                  // copy constructor
-    MyString& operator= (const MyString& str);      // copy assignment operator
-
-    char& operator[](std::size_t pos);              // оператор за достъп до елемент намиращ се на позиция pos
-    const char& operator[](std::size_t pos) const;  //
-    MyString& operator+=(const MyString& rhs);      // оператор за конкатенация на низове
-    MyString operator+(const MyString& rhs) const;  //
-    bool operator==(const MyString &rhs) const;     // оператор, проверяващ дали два символни низа са еднакви
-    bool operator== (const char* str) const;        //
-
-    MyString& num_to_str(const int num);            // връща число като символен низ
-    std::size_t size() const;                       // дължина на низа
-    void clear();                                   // изчиства съдържанието на низа
-    const char* c_str() const;                      // връща указател към null-terminated масив, който има съдържание
-                                                    // идентично с това на низа
+    // конструктори
+    MyString();
+    MyString(const char*, const int, const int);
+    MyString(const MyString&);
+    MyString& operator=(const MyString&);
+    MyString& operator=(const char*); // operator= za niz
+    ~MyString();
 
     // оператори за вход и изход
-    friend std::ostream& operator<< (std::ostream& os, const MyString& str);
-    friend std::istream& operator>> (std::istream& is, MyString &str);
+    friend std::istream& operator>>(std::istream&, MyString&);
+    friend std::ostream& operator<<(std::ostream&, const MyString&);
+    friend std::ifstream& operator>>(std::ifstream&, MyString&);
+    friend std::ofstream& operator<<(std::ofstream&, const MyString&);
+
+    // логически оператори
+    char& operator[](const int);
+    bool operator==(const MyString&) const;
+    bool operator==(const char*) const;
+    bool operator!=(const MyString&) const;
+    bool operator!=(const char*) const;
+    MyString& operator+=(const MyString&);
+
+    MyString& to_string(const int); // конвентира цяло число в низ
+    const char* c_str() const;      // връща указател към null-terminated масив, който има съдържание
+                                    // идентично с това на низа
+    int getCapacity() const;
+    int getSize() const;
+    void clear(); // изчиства стринга
 };
 
 #endif //MYSTRING_H

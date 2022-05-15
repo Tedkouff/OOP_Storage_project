@@ -1,42 +1,36 @@
-#ifndef DATE_H
-#define DATE_H
-
+#ifndef DATE_H_
+#define DATE_H_
 #include <iostream>
-#include <stdexcept>
+#include <ctime>
 
-#include "Light_String_Class/MyString.h"
+class Date {
+private:
+    int year;
+    char month[3];
+    char day[3];
 
-class Date
-{
-    unsigned long year;
-    unsigned short month;
-    unsigned short day;
-
-    bool leapYear(const int y) const;
 public:
-    Date();                                             // default constructor
-    Date(const int y, const int m, const int d);        // constructor with parameters
-    Date& operator=(const char* date);                  // operator= via string
-    Date(const Date& rhs);                              // copy constructor
-    Date& operator=(const Date& rhs);                   // copy assignment operator
+    Date();
+    Date(const int, const char*, const char*);
+    Date& operator=(const char*);
 
     // методи за достъп
-    int getYear() const;
-    int getMonth() const;
-    int getDay() const;
+    const int getYear() const;
+    const char* getMonth() const;
+    const char* getDay() const;
 
-    // метод, валидиращ датата
-    bool isValidDate() const;
-    bool isValidDate(const int y, const int m, const int d) const;
+    // логически оператори
+    bool operator==(const Date&) const;
+    bool operator<(const Date&) const;
+    bool operator>(const Date&) const;
+    bool operator<=(const Date&) const;
+    bool operator>=(const Date&) const;
 
-    // логически оператори за сравнение на дати
-    bool operator==(const Date& rhs) const;
-    bool operator<(const Date& rhs) const;
-    bool operator>(const Date& rhs) const;
+    bool isValid() const; // проверка за валидна дата
 
     // оператори за вход и изход
     friend std::istream& operator>>(std::istream&, Date&);
-    friend std::ostream& operator<<(std::ostream& os, const Date& date);
+    friend std::ostream& operator<<(std::ostream&, const Date&);
 };
 
-#endif //DATE_H
+#endif // DATE_H_

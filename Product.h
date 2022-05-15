@@ -25,6 +25,8 @@ public:
     Product();
     Product(const MyString& productName, const Date& expireDate, const Date& entryDate,
             const MyString& manufacturerName, const int& quantity, const MyString& description);
+    Product(const char* productName, const char* expireDate, const char* entryDate,
+            const char* manufacturerName, const int quantity, const char* description);
     Product(const Product& rhs);
     Product& operator=(const Product& rhs);
 

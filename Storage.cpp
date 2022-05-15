@@ -29,6 +29,7 @@ void Storage::add(Vector<Section>& tempSections)
     std::cout << "Enter the product's characteristics: " << std::endl;
     std::cin >> tempProduct;
 
+    if (tempProduct.getDescription().getSize() == 0) return;
     int n = tempSections.size();
     Vector<int> positions;
     bool flag = false;
@@ -48,52 +49,51 @@ void Storage::add(Vector<Section>& tempSections)
         addAndFillNewSections(numOfNewSections, tempProduct, tempSections, dateOfAdding);
     }
     else { // ако продуктът съществува
-        int j = 0;
+        int n = positions.size(), j = 0;
         while(tempProduct.getQuantity() > 0 && tempSections[positions[0]].getShelves().size() < 50)
         {
             if (tempProduct == tempSections[positions[0]].getShelves()[j].getProductOnShelf())
             { // ако продуктът, който добавяме e == на този от рафта
-
                 int addedQuantity;
                 if (tempProduct.getQuantity() >= 50 - tempSections[positions[0]].getShelves()[j].getProductOnShelf().getQuantity())
                 {
                     // добавяното количество е повече от свободното място на рафта
-                    addedQuantity = 50 - tempSections[positions[0]].getShelves()[j].getProductOnShelf().getQuantity();
+                    addedQuantity = 50 - tempSections[positions[0]].shelves[j].productOnShelf.quantity;
                 }
                 else
-                    addedQuantity = tempProduct.getQuantity(); // добавяното количество е по-малко от свободното място на рафта
+                    addedQuantity = tempProduct.quantity; // добавяното количество е по-малко от свободното място на рафта
 
                 if (addedQuantity > 0)
                 {
-                    tempSections[positions[0]].getShelves()[j].productOnShelf.quantity += addedQuantity;
+                    tempSections[positions[0]].shelves[j].productOnShelf.quantity += addedQuantity;
                     bool isNotMet = true;
                     int sizeOfEntryDates = tempSections[positions[0]].shelves[j].entryDates.size();
                     for (int i = 0; i < sizeOfEntryDates; i++)
                     {
                         if (tempSections[positions[0]].getShelves()[j].entryDates[i] == tempProduct.getEntryDate())
                         {
-                            tempSections[positions[0]].getShelves()[j].productsForEveryDate[i] += addedQuantity;
+                            tempSections[positions[0]].shelves[j].productsForEveryDate[i] += addedQuantity;
                             //добавяме към вектора, който следи количеството продукт, внесен на определена дата
                             isNotMet = false;
                             break;
                         }
                     }
                     if (isNotMet) { // ако датата на постъпване е нова за вектора от дати
-                        tempSections[positions[0]].getShelves()[j].entryDates.add(tempProduct.getEntryDate());
-                        tempSections[positions[0]].getShelves()[j].productsForEveryDate.add(addedQuantity);
+                        tempSections[positions[0]].shelves[j].entryDates.add(tempProduct.getEntryDate());
+                        tempSections[positions[0]].shelves[j].productsForEveryDate.add(addedQuantity);
                     }
                     tempProduct.quantity -= addedQuantity; // намалява се количеството на добавяния продукт
 
                     MyString message, op, numOfSection, numOfShelf, sh, nameOfPr, productStr, quantity, addedQStr;
                     // създава се съобщение за справка за добавяне
                     op = "operation: add | Section: ";
-                    numOfSection.num_to_str(positions[0]);
+                    numOfSection.to_string(positions[0]);
                     sh = " | Shelf: ";
-                    numOfShelf.num_to_str(j);
+                    numOfShelf.to_string(j);
                     productStr = " | product: ";
                     nameOfPr = tempProduct.getProductName();
                     quantity = " | quantity: ";
-                    addedQStr.num_to_str(addedQuantity);
+                    addedQStr.to_string(addedQuantity);
                     message += op;
                     message += numOfSection;
                     message += sh;
@@ -114,7 +114,8 @@ void Storage::add(Vector<Section>& tempSections)
                     // ако количеството продукт се побира в останалото място в секцията
                     for (int i = 0; i < amountOfNewShelves - 1; i++) {
                         Shelf tempShelf;
-                        Product copyOfTempProduct(tempProduct.getProductName(), tempProduct.getExpireDate(), tempProduct.getEntryDate(), tempProduct.getManufacturerName(), 50, tempProduct.getDescription());
+                        Product copyOfTempProduct(tempProduct.getProductName(), tempProduct.getExpireDate(),
+                                                  tempProduct.getEntryDate(), tempProduct.getManufacturerName(), 50, tempProduct.getDescription());
                         tempShelf.productOnShelf = copyOfTempProduct;
                         tempShelf.entryDates.add(tempProduct.getEntryDate());
                         tempShelf.productsForEveryDate.add(50);
@@ -123,13 +124,13 @@ void Storage::add(Vector<Section>& tempSections)
                         MyString message, op, numOfSection, numOfShelf, sh, nameOfPr, productStr, quantity, addedQStr;
                         // създава се съобщение за справка за добавяне
                         op = "operation: add | Section: ";
-                        numOfSection.num_to_str(positions[0]);
+                        numOfSection.to_string(positions[0]);
                         sh = " | Shelf: ";
-                        numOfShelf.num_to_str(tempSections[positions[0]].getShelves().size());
+                        numOfShelf.to_string(tempSections[positions[0]].getShelves().size());
                         productStr = " | product: ";
                         nameOfPr = tempProduct.getProductName();
                         quantity = " | quantity: ";
-                        addedQStr.num_to_str(50);
+                        addedQStr.to_string(50);
                         message += op;
                         message += numOfSection;
                         message += sh;
@@ -145,21 +146,23 @@ void Storage::add(Vector<Section>& tempSections)
 
                     tempProduct.quantity %= 50;
                     Shelf tempShelf;
-                    Product copyOfTempProduct(tempProduct.getProductName(), tempProduct.getExpireDate(), tempProduct.getEntryDate(), tempProduct.getManufacturerName(), tempProduct.getQuantity(), tempProduct.getDescription());
+                    Product copyOfTempProduct(tempProduct.getProductName(), tempProduct.getExpireDate(),
+                                              tempProduct.getEntryDate(), tempProduct.getManufacturerName(), tempProduct.getQuantity(), tempProduct.getDescription());
                     tempShelf.productOnShelf = copyOfTempProduct;
                     tempShelf.entryDates.add(tempProduct.getEntryDate());
                     tempShelf.productsForEveryDate.add(tempProduct.getQuantity());
                     tempSections[positions[0]].shelves.add(tempShelf);
+
                     MyString message, op, numOfSection, numOfShelf, sh, nameOfPr, productStr, quantity, addedQStr;
-                    // postroyavame suobshtenieto za spravkata za dobavyane
+                    // създава се съобщение за справка за добавяне
                     op = "operation: add | Section: ";
-                    numOfSection.num_to_str(positions[0]);
+                    numOfSection.to_string(positions[0]);
                     sh = " | Shelf: ";
-                    numOfShelf.num_to_str(tempSections[positions[0]].getShelves().size());
+                    numOfShelf.to_string(tempSections[positions[0]].getShelves().size());
                     productStr = " | product: ";
                     nameOfPr = tempProduct.getProductName();
                     quantity = " | quantity: ";
-                    addedQStr.num_to_str(tempProduct.getQuantity());
+                    addedQStr.to_string(tempProduct.getQuantity());
                     message += op;
                     message += numOfSection;
                     message += sh;
@@ -168,6 +171,7 @@ void Storage::add(Vector<Section>& tempSections)
                     message += nameOfPr;
                     message += quantity;
                     message += addedQStr;
+
                     Log tempLog(dateOfAdding, message);
                     logs.add(tempLog);
 
@@ -178,7 +182,8 @@ void Storage::add(Vector<Section>& tempSections)
                     int shelvesToBeAdded = 50 - tempSections[positions[0]].getShelves().size();
                     for (int i = 0; i < shelvesToBeAdded; i++) {
                         Shelf tempShelf;
-                        Product copyOfTempProduct(tempProduct.getProductName(), tempProduct.getExpireDate(), tempProduct.getEntryDate(), tempProduct.getManufacturerName(), 50, tempProduct.getDescription());
+                        Product copyOfTempProduct(tempProduct.getProductName(), tempProduct.getExpireDate(),
+                                                  tempProduct.getEntryDate(), tempProduct.getManufacturerName(), 50, tempProduct.getDescription());
                         tempShelf.productOnShelf = copyOfTempProduct;
                         tempShelf.entryDates.add(tempProduct.getEntryDate());
                         tempShelf.productsForEveryDate.add(50);
@@ -187,13 +192,13 @@ void Storage::add(Vector<Section>& tempSections)
                         MyString message, op, numOfSection, numOfShelf, sh, nameOfPr, productStr, quantity, addedQStr;
                         // създава се съобщение за справка за добавяне
                         op = "operation: add | Section: ";
-                        numOfSection.num_to_str(positions[0]);
+                        numOfSection.to_string(positions[0]);
                         sh = " | Shelf: ";
-                        numOfShelf.num_to_str(tempSections[positions[0]].getShelves().size());
+                        numOfShelf.to_string(tempSections[positions[0]].getShelves().size());
                         productStr = " | product: ";
                         nameOfPr = tempProduct.getProductName();
                         quantity = " | quantity: ";
-                        addedQStr.num_to_str(50);
+                        addedQStr.to_string(50);
                         message += op;
                         message += numOfSection;
                         message += sh;
@@ -231,10 +236,12 @@ void Storage::removeProduct(Vector<Section>& tempSections)
     std::cout << "\namount: ";
     std::cin >> amountOfProduct;
     if (amountOfProduct == 0) return;
+
     Date dateOfRemoving; // датата, на която се извършва премахването
     std::cout << "Choose an option for the date that you are removing the products: " << std::endl;
     std::cout << "1: Enter a date that you want." << std::endl;
     std::cout << "2: Remove by current date." << std::endl;
+
     int option;      // избира се дали датата да е текущата за компютъра или да е въведена от потребителя
     std::cout << "Option(1 / 2): ";
     std::cin >> option;
@@ -284,6 +291,7 @@ void Storage::removeProduct(Vector<Section>& tempSections)
         std::cout << "\n1. I'll still remove the remaining products." << std::endl;
         std::cout << "2. Exit the command." << std::endl;
         std::cout << "Option(1 / 2): ";
+        int option;
         std::cin >> option;
 
         if (option == 1) {
@@ -323,7 +331,7 @@ void Storage::removeProduct(Vector<Section>& tempSections)
                 int numOfShelves = tempSections[i].getShelves().size();
                 for (int j = 0; j < numOfShelves; j++)
                 { // обхождане по всички рафтове
-                    expireDates.add(tempSections[i].getShelves()[j].getProductOnShelf().getExpireDate());
+                    expireDates.add(tempSections[i].getShelves()[j].productOnShelf.getExpireDate());
                 } // добавяме срока на годност на продукта от всеки рафт
             }
         }
@@ -353,28 +361,28 @@ void Storage::removeProduct(Vector<Section>& tempSections)
                     { // обхождане по рафтове
                         if (expireDates[br] == tempSections[i].getShelves()[j].getProductOnShelf().getExpireDate())
                         {// от този рафт ще се премахват продукти
-                            if (tempAmountOfRemovedProduct <= tempSections[i].getShelves()[j].getProductOnShelf().getQuantity())
+                            if (tempAmountOfRemovedProduct <= tempSections[i].shelves[j].productOnShelf.quantity)
                             {// въведеното количество е по-малко от наличното на рафта
                                 std::cout << "Section: " << tempSections[i].getName();
                                 std::cout << " | shelf: " << j << std::endl;
                                 std::cout << "Batch: " << tempSections[i].getShelves()[j].getProductOnShelf().getExpireDate() << " ";
                                 std::cout << "Removed product: " << tempAmountOfRemovedProduct << " of " << tempSections[i].getShelves()[j].getProductOnShelf().getQuantity() << std::endl << std::endl;
-                                tempSections[i].getShelves()[j].productOnShelf.quantity -= tempAmountOfRemovedProduct;
+                                tempSections[i].shelves[j].productOnShelf.quantity -= tempAmountOfRemovedProduct;
                                 // премахва се въведеното количество от продукта на рафта
-                                if (tempSections[i].getShelves()[j].getProductOnShelf().getQuantity() == 0) {
+                                if (tempSections[i].shelves[j].productOnShelf.quantity == 0) {
                                     tempSections[i].shelves.removeAtIndex(j);
                                 }
 
                                 MyString message, op, numOfSection, sh, numOfShelf, productStr, nameOfPr, amountStr, quantity;
                                 // създава се съобщение за справка за премахване
                                 op = "operation: remove | Section: ";
-                                numOfSection.num_to_str(i);
+                                numOfSection.to_string(i);
                                 sh = " | Shelf: ";
-                                numOfShelf.num_to_str(j);
+                                numOfShelf.to_string(j);
                                 productStr = " | product: ";
                                 nameOfPr = nameOfProduct;
                                 amountStr = " | amount: ";
-                                quantity.num_to_str(tempAmountOfRemovedProduct);
+                                quantity.to_string(tempAmountOfRemovedProduct);
                                 message += op;
                                 message += numOfSection;
                                 message += sh;
@@ -383,25 +391,28 @@ void Storage::removeProduct(Vector<Section>& tempSections)
                                 message += nameOfPr;
                                 message += amountStr;
                                 message += quantity;
+
                                 Log tempLog(dateOfRemoving, message);
                                 logs.add(tempLog);
 
-                                // оправят се векторите с дати на прием и количество за всяка дата
-                                if (tempSections[i].shelves[j].productsForEveryDate[0] > tempAmountOfRemovedProduct)
-                                {
-                                    tempSections[i].shelves[j].productsForEveryDate[0] -= tempAmountOfRemovedProduct;
-                                    tempAmountOfRemovedProduct = 0;
-                                }
-                                else if (tempSections[i].shelves[j].productsForEveryDate[0] == tempAmountOfRemovedProduct)
-                                {
-                                    tempSections[i].shelves[j].productsForEveryDate.removeAtIndex(0);
-                                    tempSections[i].shelves[j].entryDates.removeAtIndex(0);
-                                    tempAmountOfRemovedProduct = 0;
-                                }
-                                else {
-                                    tempAmountOfRemovedProduct -= tempSections[i].shelves[j].productsForEveryDate[0];
-                                    tempSections[i].shelves[j].productsForEveryDate.removeAtIndex(0);
-                                    tempSections[i].shelves[j].entryDates.removeAtIndex(0);
+                                while (tempAmountOfRemovedProduct > 0) {
+                                    // оправят се векторите с дати на прием и количество за всяка дата
+                                    int count = 0;
+                                    if (tempSections[i].shelves[j].productsForEveryDate[0] >
+                                        tempAmountOfRemovedProduct) {
+                                        tempSections[i].shelves[j].productsForEveryDate[0] -= tempAmountOfRemovedProduct;
+                                        tempAmountOfRemovedProduct = 0;
+                                    } else if (tempSections[i].shelves[j].productsForEveryDate[0] ==
+                                               tempAmountOfRemovedProduct) {
+                                        tempSections[i].shelves[j].productsForEveryDate.removeAtIndex(0);
+                                        tempSections[i].shelves[j].entryDates.removeAtIndex(0);
+                                        tempAmountOfRemovedProduct = 0;
+                                    } else {
+                                        tempAmountOfRemovedProduct -= tempSections[i].shelves[j].productsForEveryDate[0];
+                                        tempSections[i].shelves[j].productsForEveryDate.removeAtIndex(0);
+                                        tempSections[i].shelves[j].entryDates.removeAtIndex(0);
+                                    }
+                                    count++;
                                 }
 
                                 tempAmountOfRemovedProduct = 0;
@@ -413,18 +424,18 @@ void Storage::removeProduct(Vector<Section>& tempSections)
                                 std::cout << " | shelf: " << j << std::endl;
                                 std::cout << "Batch: " << tempSections[i].getShelves()[j].getProductOnShelf().getExpireDate() << " ";
                                 std::cout << "Removed product: " << tempSections[i].getShelves()[j].getProductOnShelf().getQuantity() << " of " << tempSections[i].getShelves()[j].getProductOnShelf().getQuantity() << std::endl << std::endl;
-                                tempAmountOfRemovedProduct -= tempSections[i].getShelves()[j].getProductOnShelf().getQuantity();
+                                tempAmountOfRemovedProduct -= tempSections[i].shelves[j].productOnShelf.quantity;
 
                                 MyString message, op, numOfSection, sh, numOfShelf, productStr, nameOfPr, amountStr, amount_;
                                 // създава се съобщение за справка за премахване
                                 op = "operation: remove | Section: ";
-                                numOfSection.num_to_str(i);
+                                numOfSection.to_string(i);
                                 sh = " | Shelf: ";
-                                numOfShelf.num_to_str(j);
+                                numOfShelf.to_string(j);
                                 productStr = " | product: ";
                                 nameOfPr = nameOfProduct;
                                 amountStr = " | amount: all ";
-                                amount_.num_to_str(tempSections[i].getShelves()[j].getProductOnShelf().getQuantity());
+                                amount_.to_string(tempSections[i].getShelves()[j].getProductOnShelf().getQuantity());
                                 message += op;
                                 message += numOfSection;
                                 message += sh;
@@ -461,7 +472,7 @@ void Storage::printLogs(const char* firstDate, const char* secondDate) const
     Date fDate, sDate;
     fDate = firstDate;
     sDate = secondDate;
-    if (!(fDate.isValidDate()) || !(sDate.isValidDate())) return;
+    if (!(fDate.isValid()) || !(sDate.isValid())) return;
     bool empty = true;
     for (int i = 0; i < n; i++) {
         if (!(fDate > logs[i].getDate()) && !(sDate < logs[i].getDate()))
@@ -487,7 +498,7 @@ void Storage::cleanUp(Vector<Section>& tempSections)
         Date inputDate;
         std::cout << "Enter date: ";
         std::cin >> inputDate;
-        if(!(inputDate.isValidDate())) return;
+        if(!(inputDate.isValid())) return;
         int n = tempSections.size();
         for (int i = 0; i < n; i++) { // цикъл по всички секции
             int numOfShelves = tempSections[i].getShelves().size();
@@ -668,7 +679,7 @@ void Storage::help() const
     std::cout << "save                  saves updates in currently opened file" << std::endl;
     std::cout << "saveAs <file>         saves updates in <file>" << std::endl;
     std::cout << "------------------------------------------------------------" << std::endl;
-    std::cout << "print                     prints info about the available products in storage" << std::endl;
+    std::cout << "display_info              prints info about the available products in storage" << std::endl;
     std::cout << "add                       adds a new product to storage" << std::endl;
     std::cout << "remove                    removes a product from storage" << std::endl;
     std::cout << "update_log <from> <to>    outputs a reference to all updates in the period <from> - <to> (dates)" << std::endl;
@@ -707,7 +718,7 @@ void Storage::addAndFillNewSections(int numOfNewSections, const Product& tempPro
         MyString message, op, numOfSection, filled;
         // създава се съобщение за справка за добавяне
         op = "operation: add | Section: ";
-        numOfSection.num_to_str(tempSections.size());
+        numOfSection.to_string(tempSections.size());
         filled = " | filled with ";
         message += op;
         message += numOfSection;
@@ -726,9 +737,9 @@ void Storage::addAndFillNewSections(int numOfNewSections, const Product& tempPro
         MyString message, op, numOfSection, brOfShelvesStr, sh, prName, with;
         // създава се съобщение за справка за добавяне
         op = "operation: add | Section: ";
-        numOfSection.num_to_str(tempSections.size());
+        numOfSection.to_string(tempSections.size());
         sh = " | number of shelves filled: ";
-        brOfShelvesStr.num_to_str(brOfShelves);
+        brOfShelvesStr.to_string(brOfShelves);
         with = " | with ";
         prName = tempProduct.getProductName();
         message += op;
@@ -754,13 +765,13 @@ void Storage::addAndFillNewSections(int numOfNewSections, const Product& tempPro
     MyString message, op, numOfSection, numOfShelf, sh, amount_, amountStr, nameOfPr, productStr;
     // създава се съобщение за справка за добавяне
     op = "operation: add | Section: ";
-    numOfSection.num_to_str(tempSections.size() - 1);
+    numOfSection.to_string(tempSections.size() - 1);
     sh = " | Shelf: ";
-    numOfShelf.num_to_str(tempSections[tempSections.size() - 1].getShelves().size());
+    numOfShelf.to_string(tempSections[tempSections.size() - 1].getShelves().size());
     productStr = " | product: ";
     nameOfPr = tempProduct.getProductName();
     amountStr = " | amount: ";
-    amount_.num_to_str(amountForNewSection % 50);
+    amount_.to_string(amountForNewSection % 50);
     message += op;
     message += numOfSection;
     message += sh;
@@ -778,9 +789,26 @@ Date Storage::createCurrDate() const
     time_t t = time(NULL);
     tm* timePtr = localtime(&t);
     int year = 1900 + timePtr->tm_year;
-    int	month = 1 + timePtr->tm_mon;
-    int	day = timePtr->tm_mday;
-
+    int	intMonth = 1 + timePtr->tm_mon;
+    int	intDay = timePtr->tm_mday;
+    char month[3];
+    char day[3];
+    if (intMonth < 10) {
+        month[0] = '0';
+    }
+    else {
+        month[0] = '1';
+    }
+    month[1] = intMonth % 10 + '0';
+    month[2] = '\0';
+    if (intDay < 10) {
+        day[0] = '0';
+    }
+    else {
+        day[0] = intDay / 10 + '0';
+    }
+    day[1] = intDay % 10 + '0';
+    day[2] = '\0';
     Date currDate(year, month, day);
     return currDate;
 }

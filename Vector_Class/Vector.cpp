@@ -121,7 +121,7 @@ void Vector<T>::removeAtIndex(int i) {
         std::cout << "Invalid index!" << std::endl;
         return;
     }
-    
+
     Vector<T> tempVector(count - 1);
     int br = 0;
     for (int j = 0; j < i; j++) {
@@ -134,7 +134,7 @@ void Vector<T>::removeAtIndex(int i) {
         br++;
         tempVector.addToCount();
     }
-    
+
     *this = tempVector;
 }
 
